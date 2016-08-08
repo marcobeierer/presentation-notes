@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 )
 
