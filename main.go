@@ -12,11 +12,12 @@ import (
 	"time"
 )
 
-var markdownTemplate = `--- ---
-{{ range . }}
-!({{ . }})
+var markdownTemplate = `| Slide | Notes |
+| --- | --- |
+{{ range . }}| ![]({{ . }}){ width=100% } |  |
 {{ end }}
---- ---`
+
+`
 
 var htmlTemplate = `<!DOCTYPE html>
 <html>
@@ -48,12 +49,10 @@ func main() {
 
 	tmpPath := fmt.Sprintf("%s/%s-%d", os.TempDir(), filenameIn, time.Now().Unix())
 	htmlFilePath := fmt.Sprintf("%s/index.html", tmpPath)
-
-	imagesDir := "images"
-	imagesPath := fmt.Sprintf("%s/%s", tmpPath, imagesDir)
+	imagesPath := fmt.Sprintf("%s/images", tmpPath)
 
 	convertPDFToImages(filenameIn, imagesPath)
-	createHTMLFile(htmlFilePath, imagesPath, imagesDir)
+	createHTMLFile(htmlFilePath, imagesPath)
 
 	createODTDocument(filenameOut, htmlFilePath)
 
@@ -68,7 +67,7 @@ func createODTDocument(filenameOut, htmlFilePath string) {
 	}
 }
 
-func createHTMLFile(htmlFilePath, imagesPath, imagesDir string) {
+func createHTMLFile(htmlFilePath, imagesPath string) {
 	t, err := template.New("notes").Parse(markdownTemplate)
 	if err != nil {
 		log.Fatalln(err)
@@ -82,7 +81,7 @@ func createHTMLFile(htmlFilePath, imagesPath, imagesDir string) {
 	filenames := []string{}
 
 	for _, file := range files {
-		filenames = append(filenames, fmt.Sprintf("%s/%s", imagesDir, file.Name()))
+		filenames = append(filenames, fmt.Sprintf("%s/%s", imagesPath, file.Name()))
 	}
 
 	file, err := os.Create(htmlFilePath)
