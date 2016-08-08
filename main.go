@@ -19,24 +19,6 @@ var markdownTemplate = `| Slide | Notes |
 
 `
 
-var htmlTemplate = `<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>Presentation Notes</title>
-	</head>
-	<body>
-		<table>
-			{{ range . }}
-			<tr>
-				<td width="50%"><img src="{{ . }}" /></td>
-				<td></td>
-			</tr>
-			{{ end }}
-		<table>
-	</body>
-</html>`
-
 func main() {
 	log.SetFlags(log.Lshortfile)
 
@@ -48,26 +30,25 @@ func main() {
 	overwriteExistingFile(filenameOut)
 
 	tmpPath := fmt.Sprintf("%s/%s-%d", os.TempDir(), filenameIn, time.Now().Unix())
-	htmlFilePath := fmt.Sprintf("%s/index.html", tmpPath)
+	markdownFilePath := fmt.Sprintf("%s/index.md", tmpPath)
 	imagesPath := fmt.Sprintf("%s/images", tmpPath)
 
 	convertPDFToImages(filenameIn, imagesPath)
-	createHTMLFile(htmlFilePath, imagesPath)
+	createMarkdownFile(markdownFilePath, imagesPath)
 
-	createODTDocument(filenameOut, htmlFilePath)
+	createODTDocument(filenameOut, markdownFilePath)
 
 	// TODO delete tmpPath (first echo)
 }
 
-func createODTDocument(filenameOut, htmlFilePath string) {
-	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "-o", filenameOut, htmlFilePath) // TODO are the params escaped by Command?
-	//command := exec.Command("unoconv", "--format", "odt", "--doctype", "document", "--outputpath", filenameOut, htmlFilePath) // TODO are the params escaped by Command?
+func createODTDocument(filenameOut, markdownFilePath string) {
+	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func createHTMLFile(htmlFilePath, imagesPath string) {
+func createMarkdownFile(markdownFilePath, imagesPath string) {
 	t, err := template.New("notes").Parse(markdownTemplate)
 	if err != nil {
 		log.Fatalln(err)
@@ -84,7 +65,7 @@ func createHTMLFile(htmlFilePath, imagesPath string) {
 		filenames = append(filenames, fmt.Sprintf("%s/%s", imagesPath, file.Name()))
 	}
 
-	file, err := os.Create(htmlFilePath)
+	file, err := os.Create(markdownFilePath)
 	if err != nil {
 		log.Fatalln(err)
 	}
