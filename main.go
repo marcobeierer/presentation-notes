@@ -12,14 +12,16 @@ import (
 	"time"
 )
 
-var htmlTemplate = `
-<!DOCTYPE html>
-<html lang="en">
+var markdownTemplate = `--- ---
+{{ range . }}
+!({{ . }})
+{{ end }}
+--- ---`
+
+var htmlTemplate = `<!DOCTYPE html>
+<html>
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-
 		<title>Presentation Notes</title>
 	</head>
 	<body>
@@ -32,8 +34,7 @@ var htmlTemplate = `
 			{{ end }}
 		<table>
 	</body>
-</html>
-`
+</html>`
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -60,14 +61,15 @@ func main() {
 }
 
 func createODTDocument(filenameOut, htmlFilePath string) {
-	command := exec.Command("pandoc", "-f", "html", "-t", "odt", "-o", filenameOut, htmlFilePath) // TODO are the params escaped by Command?
+	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "-o", filenameOut, htmlFilePath) // TODO are the params escaped by Command?
+	//command := exec.Command("unoconv", "--format", "odt", "--doctype", "document", "--outputpath", filenameOut, htmlFilePath) // TODO are the params escaped by Command?
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
 }
 
 func createHTMLFile(htmlFilePath, imagesPath, imagesDir string) {
-	t, err := template.New("notes").Parse(htmlTemplate)
+	t, err := template.New("notes").Parse(markdownTemplate)
 	if err != nil {
 		log.Fatalln(err)
 	}
