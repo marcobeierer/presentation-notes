@@ -10,14 +10,17 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"strconv"
 )
 
-var markdownTemplate = `| Slide | Notes |
+var widthInPx = 306
+
+var markdownTemplate = fmt.Sprintf(`| Slide | Notes |
 | --- | --- |
-{{ range . }}| ![]({{ . }}){ width=100% } |  |
+{{ range . }}| ![]({{ . }}){ width=%dpx } |  |
 {{ end }}
 
-`
+`, widthInPx)
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -93,6 +96,11 @@ func convertPDFToImages(filenameIn, imagesPath string) {
 	}
 
 	command := exec.Command("convert", filenameIn, imagesPath+"/%003d.jpg") // TODO are the params escaped by Command?
+	if err := command.Run(); err != nil {
+		log.Fatalln(err)
+	}
+
+	command = exec.Command("mogrify", "-resize", strconv.Itoa(widthInPx), imagesPath+"/*.jpg") // 306 px = 3.19 inch at 96 dpi
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
