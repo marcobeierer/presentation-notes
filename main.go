@@ -27,7 +27,7 @@ var markdownTemplate = fmt.Sprintf(`
 | --- | --- |
 | ![]({{ . }}){ width=%dpx } |  |
 
-{{ end }}
+<br>{{ end }}
 
 `, widthInPx)
 
