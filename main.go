@@ -7,10 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
-	"strconv"
 )
 
 var widthInPx = 306
@@ -28,7 +28,8 @@ func main() {
 	checkBinaries()
 
 	filenameIn := selectFile()
-	filenameOut := strings.Replace(filenameIn, ".pdf", ".odt", -1) // TODO use regexp to make sure that at the end
+	filenameOut := strings.Replace(filenameIn, ".pdf", ".odt", -1)      // TODO use regexp to make sure that at the end
+	filenameDOCxOut := strings.Replace(filenameIn, ".pdf", ".docx", -1) // TODO use regexp to make sure that at the end
 
 	overwriteExistingFile(filenameOut)
 
@@ -40,12 +41,20 @@ func main() {
 	createMarkdownFile(markdownFilePath, imagesPath)
 
 	createODTDocument(filenameOut, markdownFilePath)
+	createDOCxDocument(filenameDOCxOut, markdownFilePath)
 
 	// TODO delete tmpPath (first echo)
 }
 
 func createODTDocument(filenameOut, markdownFilePath string) {
 	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
+	if err := command.Run(); err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func createDOCxDocument(filenameOut, markdownFilePath string) {
+	command := exec.Command("pandoc", "-f", "markdown", "-t", "docx", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
