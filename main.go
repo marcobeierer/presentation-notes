@@ -23,11 +23,13 @@ var widthInPx = 306
 `, widthInPx)*/
 
 var markdownTemplate = fmt.Sprintf(`
-{{ range . }}| Slide | Notes |
+{{ range . }}
+| Slide | Notes |
 | --- | --- |
 | ![]({{ . }}){ width=%dpx } |  |
 
-<br>{{ end }}
+\  
+{{ end }}
 
 `, widthInPx)
 
