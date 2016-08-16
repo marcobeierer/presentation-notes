@@ -47,14 +47,14 @@ func main() {
 }
 
 func createODTDocument(filenameOut, markdownFilePath string) {
-	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
+	command := exec.Command("pandoc", "-f", "markdown", "-t", "odt", "--standalone", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
 }
 
 func createDOCxDocument(filenameOut, markdownFilePath string) {
-	command := exec.Command("pandoc", "-f", "markdown", "-t", "docx", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
+	command := exec.Command("pandoc", "-f", "markdown", "-t", "docx", "--standalone", "-o", filenameOut, markdownFilePath) // TODO are the params escaped by Command?
 	if err := command.Run(); err != nil {
 		log.Fatalln(err)
 	}
