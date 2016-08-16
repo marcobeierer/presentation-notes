@@ -15,12 +15,19 @@ import (
 
 var widthInPx = 306
 
-var markdownTemplate = fmt.Sprintf(`| Slide | Notes |
+/*var markdownTemplate = fmt.Sprintf(`| Slide | Notes |
 | --- | --- |
 {{ range . }}| ![]({{ . }}){ width=%dpx } |  |
 {{ end }}
 
-`, widthInPx)
+`, widthInPx)*/
+
+var markdownTemplate = fmt.Sprintf(`| Slide | Notes |
+| --- | --- |
+{{ range . }}| ![]({{ . }}){ width=100% } |  |
+{{ end }}
+
+`)
 
 func main() {
 	log.SetFlags(log.Lshortfile)
