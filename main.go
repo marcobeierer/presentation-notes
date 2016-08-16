@@ -32,6 +32,7 @@ func main() {
 	filenameDOCxOut := strings.Replace(filenameIn, ".pdf", ".docx", -1) // TODO use regexp to make sure that at the end
 
 	overwriteExistingFile(filenameOut)
+	overwriteExistingFile(filenameDOCxOut)
 
 	tmpPath := fmt.Sprintf("%s/%s-%d", os.TempDir(), filenameIn, time.Now().Unix())
 	markdownFilePath := fmt.Sprintf("%s/index.md", tmpPath)
